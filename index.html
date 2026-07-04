@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nassereddine Market | المنتجات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #2d5a27; --glass: rgba(255, 255, 255, 0.2); --secondary: #d4af37; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body { background-color: #f4f7f4; }
+
+        header { background: var(--primary); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .menu-icon { color: white; font-size: 1.5rem; cursor: pointer; }
+        .search-container { background: var(--glass); backdrop-filter: blur(10px); padding: 5px 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; flex: 1; margin: 0 15px; }
+        .search-container input { background: transparent; border: none; outline: none; color: white; width: 100%; margin-right: 8px; }
+        .search-container i { color: white; }
+
+        /* القائمة الجانبية (Sidebar) */
+        #sidebar { position: fixed; top: 0; right: -250px; width: 250px; height: 100%; background: white; z-index: 4000; transition: 0.3s; box-shadow: -2px 0 10px rgba(0,0,0,0.1); padding: 20px; }
+        #sidebar.active { right: 0; }
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 3500; display: none; }
+        .sidebar-overlay.active { display: block; }
+        #sidebar ul { list-style: none; margin-top: 50px; }
+        #sidebar ul li { padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; }
+
+        .category { padding: 20px; }
+        .category h3 { margin-bottom: 10px; border-right: 4px solid var(--secondary); padding-right: 10px; color: var(--primary); }
+        .slider { display: flex; gap: 15px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
+        .card { min-width: 150px; background: white; padding: 10px; border-radius: 12px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .card img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; cursor: pointer; }
+        .price-label { color: var(--primary); font-weight: bold; margin: 5px 0; display: block; }
+        .add-btn { background: var(--primary); color: white; border: none; padding: 6px; border-radius: 6px; width: 100%; cursor: pointer; margin-top: 5px; }
+
+        #productModal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:3000; justify-content:center; align-items:center; backdrop-filter: blur(5px); }
+        .modal-content { background:white; width:90%; max-width:400px; padding:20px; border-radius:30px; text-align:center; position:relative; }
+        .modal-slider { display: flex; overflow-x: auto; gap: 10px; scroll-snap-type: x mandatory; margin-bottom: 15px; border-radius: 20px; }
+        .modal-slider img { min-width: 100%; height: 250px; object-fit: cover; scroll-snap-align: center; border-radius: 20px; }
+        .qty-input { width: 60px; padding: 8px; border: 1px solid #ddd; border-radius: 6px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="menu-icon" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+        <div class="search-container"><input type="text" placeholder="بحث..."><i class="fas fa-search"></i></div>
+        <i class="fas fa-shopping-cart" style="color: white; font-size: 1.4rem;"></i>
+    </header>
+
+    <!-- السايد بار -->
+    <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+    <div id="sidebar">
+        <ul>
+            <li><i class="fas fa-home"></i> الرئيسية</li>
+            <li><i class="fas fa-list"></i> جميع التصنيفات</li>
+            <li><i class="fas fa-user"></i> حسابي</li>
+            <li><i class="fas fa-cog"></i> الإعدادات</li>
+        </ul>
+    </div>
+
+    <main>
+        <!-- قسم الفواكه -->
+        <section class="category">
+            <h3>الفواكه الطازجة</h3>
+            <div class="slider">
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1550258987-190a2d41a8ba?w=400" onclick="openProduct('تفاح', '١.٥٠ $', 'تفاح أحمر طازج ومقرمش من مزارعنا.', ['https://images.unsplash.com/photo-1550258987-190a2d41a8ba?w=400', 'https://images.unsplash.com/photo-1560806887-1e4cd0b7161b?w=400'])">
+                    <h6>تفاح</h6><span class="price-label">١.٥٠ $</span><button class="add-btn">إضافة للسلة</button>
+                </div>
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400" onclick="openProduct('موز', '١.٢٠ $', 'موز بلدي حلو المذاق وغني بالطاقة.', ['https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400', 'https://images.unsplash.com/photo-1543218024-57a70143c369?w=400'])">
+                    <h6>موز</h6><span class="price-label">١.٢٠ $</span><button class="add-btn">إضافة للسلة</button>
+                </div>
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1582284540020-8acbe03f49a1?w=400" onclick="openProduct('برتقال', '٢.٠٠ $', 'برتقال عصير طازج ومليء بفيتامين سي.', ['https://images.unsplash.com/photo-1582284540020-8acbe03f49a1?w=400', 'https://images.unsplash.com/photo-1547514701-42782101795e?w=400'])">
+                    <h6>برتقال</h6><span class="price-label">٢.٠٠ $</span><button class="add-btn">إضافة للسلة</button>
+                </div>
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=400" onclick="openProduct('فراولة', '٣.٥٠ $', 'فراولة حمراء طازجة وقطاف يومي.', ['https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=400', 'https://images.unsplash.com/photo-1518635017498-87f514b751ba?w=400'])">
+                    <h6>فراولة</h6><span class="price-label">٣.٥٠ $</span><button class="add-btn">إضافة للسلة</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- قسم اللحوم (تم إضافة الأسعار لكل المنتجات أدناه) -->
+        <section class="category">
+            <h3>اللحوم والدواجن</h3>
+            <div class="slider">
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1603048297172-c92544798d5e?w=400" onclick="openProduct('لحم ضأن', '١٥.٠٠ $', 'لحم ضأن طازج ومذبوح محلياً بجودة عالية.', ['https://images.unsplash.com/photo-1603048297172-c92544798d5e?w=400', 'https://images.unsplash.com/photo-1544025162-d76694265947?w=400'])">
+                    <h6>لحم ضأن</h6><span class="price-label">١٥.٠٠ $</span><button class="add-btn">إضافة للسلة</button>
+                </div>
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=400" onclick="openProduct('دجاج طازج', '٥.٠٠ $', 'دجاج كامل نظيف ومنظف ومبرد بعناية.', ['https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=400', 'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=400'])">
+                    <h6>دجاج طازج</h6><span class="price-label">٥.٠٠ $</span><button class="add-btn">إضافة للسلة</button>
+                </div>
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092?w=400" onclick="openProduct('ستيك بقري', '١٨.٥٠ $', 'شرائح لحم بقري فاخرة ومثالية للشواء.', ['https://images.unsplash.com/photo-1600891964599-f61ba0e24092?w=400', 'https://images.unsplash.com/photo-1546964124-0cce460f38ef?w=400'])">
+                    <h6>ستيك بقري</h6><span class="price-label">١٨.٥٠ $</span><button class="add-btn">إضافة للسلة</button>
+                </div>
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=400" onclick="openProduct('لحم مفروم', '١٢.٠ $', 'لحم بقري مفروم طازج قليل الدسم.', ['https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=400', 'https://images.unsplash.com/photo-1532550907401-a500c9a57435?w=400'])">
+                    <h6>لحم مفروم</h6><span class="price-label">١٢.٠ $</span><button class="add-btn">إضافة للسلة</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- قسم الألبان -->
+        <section class="category">
+            <h3>الألبان والأجبان</h3>
+            <div class="slider">
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1628088062854-d1fd70b9437b?w=400" onclick="openProduct('جبنة بيضاء', '٨.٠٠ $', 'جبنة بيضاء بلدية ممتازة وقليلة الملح.', ['https://images.unsplash.com/photo-1628088062854-d1fd70b9437b?w=400', 'https://images.unsplash.com/photo-1528750955923-30945beb3794?w=400'])">
+                    <h6>جبنة بيضاء</h6><span class="price-label">٨.٠٠ $</span><button class="add-btn">إضافة للسلة</button>
+                </div>
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400" onclick="openProduct('حليب كامل الدسم', '٢.٠٠ $', 'حليب بقري طازج ومبستر ١٠٠٪.', ['https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400', 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400'])">
+                    <h6>حليب طازج</h6><span class="price-label">٢.٠٠ $</span><button class="add-btn">إضافة للسلة</button>
+                </div>
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400" onclick="openProduct('لبن زبادي', '٢.٥٠ $', 'لبن زبادي طبيعي وقوام متماسك ولذيذ.', ['https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400', 'https://images.unsplash.com/photo-1571244856341-4f3dd95db33e?w=400'])">
+                    <h6>لبن زبادي</h6><span class="price-label">٢.٥٠ $</span><button class="add-btn">إضافة للسلة</button>
+                </div>
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1552763427-4d68e2ad6ad7?w=400" onclick="openProduct('زبدة طبيعية', '٤.٠٠ $', 'زبدة حيوانية طبيعية غير مملحة للطبخ والحلويات.', ['https://images.unsplash.com/photo-1552763427-4d68e2ad6ad7?w=400', 'https://images.unsplash.com/photo-1596450514735-111a2fe02935?w=400'])">
+                    <h6>زبدة طبيعية</h6><span class="price-label">٤.٠٠ $</span><button class="add-btn">إضافة للسلة</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- النافذة (Popup) -->
+    <div id="productModal" onclick="closeProduct(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-slider" id="modalSlider"></div>
+            <h2 id="modalTitle" style="margin:15px 0;"></h2>
+            <p id="modalDesc" style="color:#666;"></p>
+            <h3 id="modalPrice" style="color:var(--primary); margin:10px 0;"></h3>
+            <input type="number" class="qty-input" value="1" min="1">
+            <button class="add-btn" style="padding:15px; font-size:1.1rem;">إضافة للسلة 🛒</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        function openProduct(name, price, desc, images) {
+            document.getElementById("modalTitle").innerText = name;
+            document.getElementById("modalPrice").innerText = "السعر: " + price;
+            document.getElementById("modalDesc").innerText = desc;
+            let slider = document.getElementById("modalSlider");
+            slider.innerHTML = "";
+            images.forEach(img => { slider.innerHTML += `<img src="${img}">`; });
+            document.getElementById("productModal").style.display = "flex";
+        }
+        
+        function closeProduct(event) {
+            if (event.target.id === 'productModal') {
+                document.getElementById("productModal").style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
